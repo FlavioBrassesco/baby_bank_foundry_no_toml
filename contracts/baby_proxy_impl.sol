@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNKNOWN 
+// SPDX-License-Identifier: UNKNOWN
 pragma solidity ^0.8.0;
 
 contract BabyBankImplementation {
@@ -8,7 +8,7 @@ contract BabyBankImplementation {
 
     // No constructor for implementation contract to work with proxies
     // Initialize function instead that will be called through the proxy
-    
+
     function signup(string calldata _n) public {
         if (user[msg.sender] != 0) {
             return;
@@ -17,7 +17,11 @@ contract BabyBankImplementation {
         withdraw_time[msg.sender] = (2 ** 256) - 1;
     }
 
-    function deposit(uint256 _t, address _tg, string calldata _n) public payable {
+    function deposit(
+        uint256 _t,
+        address _tg,
+        string calldata _n
+    ) public payable {
         if (user[msg.sender] == 0) {
             revert();
         }
@@ -27,7 +31,7 @@ contract BabyBankImplementation {
         }
 
         withdraw_time[_tg] = block.number + _t;
-        balance[_tg] = msg.value;
+        balance[_tg] += msg.value;
     }
 
     function withdraw() public {
@@ -39,7 +43,9 @@ contract BabyBankImplementation {
 
         if (block.number > withdraw_time[msg.sender]) {
             // VULN: bad randomness
-            lucky = uint256(keccak256(abi.encodePacked(block.number, msg.sender))) % 10;
+            lucky =
+                uint256(keccak256(abi.encodePacked(block.number, msg.sender))) %
+                10;
             if (lucky == 0) {
                 gift = (10 ** 15) * withdraw_time[msg.sender];
             }
@@ -49,13 +55,18 @@ contract BabyBankImplementation {
         payable(msg.sender).transfer(amount);
     }
 
-    function depositAndWithdraw(uint256 _t, address _tg, string calldata _n) public payable {
+    function depositAndWithdraw(
+        uint256 _t,
+        address _tg,
+        string calldata _n
+    ) public payable {
         // First deposit
         deposit(_t, _tg, _n);
-        
+
         // Then withdraw (if the caller is the target)
         if (msg.sender == _tg) {
             withdraw();
         }
     }
 }
+
