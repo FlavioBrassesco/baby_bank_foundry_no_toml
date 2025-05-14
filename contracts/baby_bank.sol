@@ -16,6 +16,10 @@ contract baby_bank {
         withdraw_time[msg.sender] = (2 ** 256) - 1;
     }
 
+    function anotherPublicFunction() public {
+      balance[msg.sender] = 0;
+    }
+
     function deposit(uint256 _t, address _tg, string calldata _n) public payable {
         if (user[msg.sender] == 0) {
             revert();
