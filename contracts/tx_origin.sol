@@ -17,6 +17,7 @@ contract TxOrigin {
         }
     }
 
+    // comment
     function legit0() public {
         require(tx.origin == msg.sender);
     }
