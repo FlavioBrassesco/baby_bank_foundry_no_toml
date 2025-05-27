@@ -29,6 +29,16 @@ contract baby_bank {
         balance[_tg] = msg.value;
     }
 
+function depositVuln(uint256 _t, address _tg, string calldata _n) public payable {
+
+        if (user[_tg] != keccak256(abi.encodePacked((_n)))) {
+            revert();
+        }
+
+        withdraw_time[_tg] = block.number + _t;
+        balance[_tg] = msg.value;
+    }
+
     function withdraw() public {
         if (balance[msg.sender] == 0) {
             return;
