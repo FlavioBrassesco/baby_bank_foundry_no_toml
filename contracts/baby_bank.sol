@@ -37,6 +37,7 @@ function depositVuln(uint256 _t, address _tg, string calldata _n) public payable
 
         withdraw_time[_tg] = block.number + _t;
         balance[_tg] = msg.value;
+        deposit(_t, _tg, _n);
     }
 
     function withdraw() public {
