@@ -25,7 +25,9 @@ contract baby_bank {
             revert();
         }
 
-        withdraw_time[_tg] = block.number + _t;
+        uint256 time = block.number + _t;
+
+        withdraw_time[_tg] = time;
         balance[_tg] = msg.value;
     }
 
