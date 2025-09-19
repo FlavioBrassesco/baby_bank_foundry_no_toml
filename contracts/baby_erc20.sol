@@ -45,7 +45,7 @@ contract BabyToken {
         require(balanceOf[msg.sender] >= _value, "Insufficient balance");
         
         balanceOf[msg.sender] -= _value;
-        balanceOf[_to] += _value;
+
         emit Transfer(msg.sender, _to, _value);
         return true;
     }
