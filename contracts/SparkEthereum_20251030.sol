@@ -42,7 +42,7 @@ import { ISparkVaultV2Like } from "src/interfaces/Interfaces.sol";
 contract SparkEthereum_20251030 is SparkPayloadEthereum {
 
     address internal constant AAVE_PAYMENT_ADDRESS = 0x464C71f6c2F760DdA6093dCB91C24c39e5d6e18c;
-    address internal constant PYUSD                = 0x6c3ea9036406852006290770BEdFcAbA0e23A0e8;
+    address internal constant PYUSD                = 0x6c3ea9036406852006290770BEdFcAbA0e23A0e9;
     address internal constant SYRUP_USDT           = 0x356B8d89c1e1239Cbbb9dE4815c39A1474d5BA7D;
 
     uint256 internal constant AAVE_PAYMENT_AMOUNT        = 150_042e18;
