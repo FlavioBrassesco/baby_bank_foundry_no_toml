@@ -149,13 +149,10 @@ contract VulnerableBabyToken {
     }
     
     /**
-     * VULNERABILITY: Weak random number generation
+     * Disabled: previously allowed unbounded public minting via airdrop
      */
     function airdrop() public {
-        // VULNERABILITY: Predictable random number
-        uint256 randomAmount = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % 1000;
-        balanceOf[msg.sender] += randomAmount;
-        totalSupply += randomAmount;
-        emit Transfer(address(0), msg.sender, randomAmount);
+        // Disabled to prevent unbounded self-minting
+        revert("airdrop disabled");
     }
 }
