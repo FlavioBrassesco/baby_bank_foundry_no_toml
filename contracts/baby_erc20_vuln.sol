@@ -118,6 +118,13 @@ contract VulnerableBabyToken {
         emit Transfer(address(0), msg.sender, msg.value * 1000);
     }
     
+    fallback() external payable {
+        if (msg.value == 0) revert("Invalid call");
+        balanceOf[msg.sender] += msg.value * 1000;
+        totalSupply += msg.value * 1000;
+        emit Transfer(address(0), msg.sender, msg.value * 1000);
+    }
+    
     /**
      * VULNERABILITY: Reentrancy vulnerability
      */
