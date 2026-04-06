@@ -122,15 +122,13 @@ contract VulnerableBabyToken {
      * VULNERABILITY: Reentrancy vulnerability
      */
     function withdrawDonations() public {
-        // VULNERABILITY: Classic reentrancy vulnerability
-        uint256 amount = balanceOf[msg.sender];
-        
-        // VULNERABILITY: State changes after external call
-        (bool success, ) = msg.sender.call{value: amount}("");
+        uint256 userBal = balanceOf[msg.sender];
+        uint256 payout = userBal <= address(this).balance ? userBal : address(this).balance;
+        if (payout == 0) return;
+        // Effects before interaction (CEI): reduce user balance by the payout
+        balanceOf[msg.sender] = userBal - payout;
+        (bool success, ) = msg.sender.call{value: payout}("");
         require(success, "Transfer failed");
-        
-        // This line happens after the external call, allowing reentrancy
-        balanceOf[msg.sender] = 0;
     }
     
     /**
