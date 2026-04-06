@@ -53,11 +53,11 @@ contract VulnerableBabyToken {
     
     /**
      * @dev Approve the passed address to spend the specified amount of tokens on behalf of msg.sender
-     * VULNERABILITY: Allowance double-spend exploit
+     * Mitigation: Disallow non-zero-to-non-zero approvals to prevent allowance race
      */
     function approve(address _spender, uint256 _value) public returns (bool) {
-        // VULNERABILITY: This approve function is vulnerable to the "allowance double-spend" exploit
-        // The proper way is to first reduce allowance to 0, then set it to the new value
+        // Mitigation: Require zero-reset before setting a new non-zero allowance to prevent allowance race
+        require(_value == 0 || allowance[msg.sender][_spender] == 0, "non-zero->non-zero approve disallowed");
         allowance[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value);
         return true;
