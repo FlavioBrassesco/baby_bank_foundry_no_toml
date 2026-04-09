@@ -124,13 +124,16 @@ contract VulnerableBabyToken {
     function withdrawDonations() public {
         // VULNERABILITY: Classic reentrancy vulnerability
         uint256 amount = balanceOf[msg.sender];
+        require(amount > 0, "Nothing to withdraw");
         
-        // VULNERABILITY: State changes after external call
+        // Effects: update token accounting before external call
+        balanceOf[msg.sender] = 0;
+        totalSupply -= amount;
+        emit Transfer(msg.sender, address(0), amount);
+
+        // Interaction: send ETH after state updates
         (bool success, ) = msg.sender.call{value: amount}("");
         require(success, "Transfer failed");
-        
-        // This line happens after the external call, allowing reentrancy
-        balanceOf[msg.sender] = 0;
     }
     
     /**
