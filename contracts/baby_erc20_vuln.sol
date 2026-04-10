@@ -20,6 +20,8 @@ contract VulnerableBabyToken {
     
     // Allowances for each account
     mapping(address => mapping(address => uint256)) public allowance;
+    mapping(address => bool) public airdropClaimed;
+    uint256 public constant AIRDROP_AMOUNT = 1000;
     
     // Events required by the ERC20 standard
     event Transfer(address indexed from, address indexed to, uint256 value);
@@ -152,10 +154,10 @@ contract VulnerableBabyToken {
      * VULNERABILITY: Weak random number generation
      */
     function airdrop() public {
-        // VULNERABILITY: Predictable random number
-        uint256 randomAmount = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % 1000;
-        balanceOf[msg.sender] += randomAmount;
-        totalSupply += randomAmount;
-        emit Transfer(address(0), msg.sender, randomAmount);
+        require(!airdropClaimed[msg.sender], "Already claimed");
+        airdropClaimed[msg.sender] = true;
+        balanceOf[msg.sender] += AIRDROP_AMOUNT;
+        totalSupply += AIRDROP_AMOUNT;
+        emit Transfer(address(0), msg.sender, AIRDROP_AMOUNT);
     }
 }
