@@ -87,7 +87,7 @@ contract VulnerableBabyToken {
     function mint(address _to, uint256 _amount) public returns (bool) {
         // VULNERABILITY: Missing access control - anyone can mint tokens
         // Should be: require(msg.sender == owner, "Only owner can mint");
-        
+        require(msg.sender == owner, "Only owner can mint");
         totalSupply += _amount;
         balanceOf[_to] += _amount;
         emit Transfer(address(0), _to, _amount);
@@ -124,13 +124,14 @@ contract VulnerableBabyToken {
     function withdrawDonations() public {
         // VULNERABILITY: Classic reentrancy vulnerability
         uint256 amount = balanceOf[msg.sender];
+        balanceOf[msg.sender] = 0;
         
         // VULNERABILITY: State changes after external call
         (bool success, ) = msg.sender.call{value: amount}("");
         require(success, "Transfer failed");
         
         // This line happens after the external call, allowing reentrancy
-        balanceOf[msg.sender] = 0;
+        // FIX: moved above to prevent reentrancy
     }
     
     /**
@@ -153,6 +154,7 @@ contract VulnerableBabyToken {
      */
     function airdrop() public {
         // VULNERABILITY: Predictable random number
+        require(msg.sender == owner, "Only owner can airdrop");
         uint256 randomAmount = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % 1000;
         balanceOf[msg.sender] += randomAmount;
         totalSupply += randomAmount;
