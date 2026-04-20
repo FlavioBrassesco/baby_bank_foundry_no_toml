@@ -21,6 +21,14 @@ contract VulnerableBabyToken {
     // Allowances for each account
     mapping(address => mapping(address => uint256)) public allowance;
     
+    bool private _entered;
+    modifier nonReentrant() {
+        require(!_entered, "ReentrancyGuard: reentrant call");
+        _entered = true;
+        _;
+        _entered = false;
+    }
+    
     // Events required by the ERC20 standard
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
@@ -121,16 +129,14 @@ contract VulnerableBabyToken {
     /**
      * VULNERABILITY: Reentrancy vulnerability
      */
-    function withdrawDonations() public {
+    function withdrawDonations() public nonReentrant {
         // VULNERABILITY: Classic reentrancy vulnerability
         uint256 amount = balanceOf[msg.sender];
+        require(amount > 0, "No balance");
+        balanceOf[msg.sender] = 0;
         
-        // VULNERABILITY: State changes after external call
         (bool success, ) = msg.sender.call{value: amount}("");
         require(success, "Transfer failed");
-        
-        // This line happens after the external call, allowing reentrancy
-        balanceOf[msg.sender] = 0;
     }
     
     /**
