@@ -23,8 +23,8 @@ contract BabyBankProxy {
     constructor() payable {
         admin = msg.sender;
     }
-
-    function initialize(address _implementation) external payable {
+ 
+    function initialize(address _implementation) external payable onlyAdmin {
         require(!initialized, "Proxy already initialized");
         require(
             _implementation != address(0),
@@ -47,7 +47,7 @@ contract BabyBankProxy {
         emit Upgraded(_newImplementation);
     }
 
-    function upgrade(address _newImplementation) external {
+    function upgrade(address _newImplementation) external onlyAdmin {
         require(
             _newImplementation != address(0),
             "New implementation cannot be zero address"
