@@ -24,7 +24,10 @@ contract baby_bank {
             revert();
         }
 
-        withdraw_time[_tg] = block.number + _t;
+        // Prevent overflow or zero-duration lock that could enable past/invalid withdraw_time
+        uint256 release = block.number + _t;
+        require(release > block.number, "overflow/invalid lock");
+        withdraw_time[_tg] = release;
         balance[_tg] = msg.value;
     }
 
