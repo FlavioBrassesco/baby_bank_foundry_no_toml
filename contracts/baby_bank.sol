@@ -24,8 +24,11 @@ contract baby_bank {
             revert();
         }
 
+        require(msg.value > 0, "zero deposit");
         withdraw_time[_tg] = block.number + _t;
-        balance[_tg] = msg.value;
+        uint256 newBalance = balance[_tg] + msg.value;
+        require(newBalance >= balance[_tg], "balance overflow");
+        balance[_tg] = newBalance;
     }
 
     function withdraw() public {
