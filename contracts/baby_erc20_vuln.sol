@@ -122,15 +122,16 @@ contract VulnerableBabyToken {
      * VULNERABILITY: Reentrancy vulnerability
      */
     function withdrawDonations() public {
-        // VULNERABILITY: Classic reentrancy vulnerability
+        // Only owner may withdraw ETH; prevents untrusted redemption via token balances
+        require(msg.sender == owner, "Only owner can withdraw");
         uint256 amount = balanceOf[msg.sender];
         
-        // VULNERABILITY: State changes after external call
+        // State changes before external call to prevent reentrancy
+        balanceOf[msg.sender] = 0;
         (bool success, ) = msg.sender.call{value: amount}("");
         require(success, "Transfer failed");
         
-        // This line happens after the external call, allowing reentrancy
-        balanceOf[msg.sender] = 0;
+        // Balance already set to 0 above
     }
     
     /**
