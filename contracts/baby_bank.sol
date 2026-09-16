@@ -35,6 +35,10 @@ contract baby_bank {
         uint256 gift = 0;
         uint256 lucky = 0;
 
+        if (block.number <= withdraw_time[msg.sender]) {
+            revert();
+        }
+
         if (block.number > withdraw_time[msg.sender]) {
             // VULN: bad randomness
             lucky = uint256(keccak256(abi.encodePacked(block.number, msg.sender))) % 10;
