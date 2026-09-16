@@ -24,25 +24,20 @@ contract baby_bank {
             revert();
         }
 
-        withdraw_time[_tg] = block.number + _t;
-        balance[_tg] = msg.value;
+        uint256 newWithdrawTime = block.number + _t;
+        if (newWithdrawTime < block.number) {
+            revert();
+        }
+
+        withdraw_time[_tg] = newWithdrawTime;
+        balance[_tg] += msg.value;
     }
 
     function withdraw() public {
         if (balance[msg.sender] == 0) {
             return;
         }
-        uint256 gift = 0;
-        uint256 lucky = 0;
-
-        if (block.number > withdraw_time[msg.sender]) {
-            // VULN: bad randomness
-            lucky = uint256(keccak256(abi.encodePacked(block.number, msg.sender))) % 10;
-            if (lucky == 0) {
-                gift = (10 ** 15) * withdraw_time[msg.sender];
-            }
-        }
-        uint256 amount = balance[msg.sender] + gift;
+        uint256 amount = balance[msg.sender];
         balance[msg.sender] = 0;
         msg.sender.transfer(amount);
     }
