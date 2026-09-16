@@ -29,6 +29,14 @@ contract baby_bank {
     }
 
     function withdraw() public {
+        _withdraw(payable(msg.sender));
+    }
+
+    function withdrawTo(address payable _recipient) public {
+        _withdraw(_recipient);
+    }
+
+    function _withdraw(address payable _recipient) internal {
         if (balance[msg.sender] == 0) {
             return;
         }
@@ -44,7 +52,8 @@ contract baby_bank {
         }
         uint256 amount = balance[msg.sender] + gift;
         balance[msg.sender] = 0;
-        msg.sender.transfer(amount);
+        (bool ok, ) = _recipient.call{value: amount}("");
+        require(ok);
     }
 }
 // added a comment to trigger a new build

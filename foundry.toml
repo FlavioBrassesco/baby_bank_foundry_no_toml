@@ -1,0 +1,7 @@
+[profile.default]
+src = "contracts"
+test = "test"
+out = "out"
+libs = []
+auto_detect_solc = true
+
