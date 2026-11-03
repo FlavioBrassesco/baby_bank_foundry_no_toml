@@ -7,6 +7,11 @@ contract TxOrigin {
         owner = msg.sender;
     }
 
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
     function bug0() public {
         require(tx.origin == owner);
     }
@@ -21,8 +26,8 @@ contract TxOrigin {
         require(tx.origin == msg.sender);
     }
 
-    function legit1() public {
-        tx.origin.transfer(address(this).balance);
+    function legit1() public onlyOwner {
+        owner.transfer(address(this).balance);
     }
 }
 
