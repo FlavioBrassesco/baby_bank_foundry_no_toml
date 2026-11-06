@@ -23,7 +23,6 @@ contract TxOrigin {
     }
 
     function legit0() public {
-        require(tx.origin == msg.sender);
     }
 
     function legit1() public onlyOwner {
